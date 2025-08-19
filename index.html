@@ -1,98 +1,1587 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digimartbox Martkeplace</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>HERPLUS – Panel Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- QR -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"
+          integrity="sha512-Mqz8qYEQwQwH6zqPU1C1iGg0nC2sS4JQ8gZ1pXBd9Q0gqjD2x5D+gJqJQ2eKfG2U7mX1gVZrNq2E2GmW0Cw3GQ=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <style>
+    .glass{background:rgba(255,255,255,.85);backdrop-filter:saturate(150%) blur(8px)}
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
+    .hint{font-size:.75rem;color:#64748b}
+    .hidden-hard{display:none !important}
+    .modal{position:fixed;inset:0;background:rgba(15,23,42,.5);display:flex;align-items:center;justify-content:center;padding:1rem}
+    .badge{font-size:.7rem;padding:.2rem .5rem;border-radius:.5rem}
+    .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#111827;color:#fff;padding:.55rem .8rem;border-radius:.6rem;box-shadow:0 10px 25px rgba(0,0,0,.25);opacity:0;transition:opacity .2s}
+    .toast.show{opacity:1}
+  </style>
 </head>
-<body>
-    <header>
-        <nav>
-            <div class="logo">Digimartbox Martkeplace</div>
-            <ul class="nav-links">
-                <li><a href="#about">Sobre Nosotros</a></li>
-                <li><a href="#features">Características</a></li>
-                <li><a href="#cta">Contacto</a></li>
-            </ul>
-        </nav>
-        <div class="header-content">
-            <h1>Transforma tu Futuro con Nuestro Plan de Negocio</h1>
-            <p>Compra y vende con nosotros te garantizamos un futuro estupendo con Excelente ganancias y éxito asegurado.</p>
-            <a href="https://digimartbox.shop/dashboard/Socio/50496173031" class="btn-registrate">Regístrate Aquí</a>
+<body class="bg-gradient-to-br from-slate-50 via-white to-indigo-50 text-slate-800">
+
+  <!-- Gate por CÓDIGO -->
+  <div id="gate" class="min-h-screen flex items-center justify-center p-6">
+    <div class="max-w-md w-full glass rounded-2xl p-6 shadow">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-slate-900"></div>
+        <div>
+          <h1 class="text-lg font-semibold">HERPLUS – Panel Admin</h1>
+          <p class="text-xs text-slate-500">Acceso con código</p>
         </div>
+      </div>
+      <form id="formCode" class="mt-4 space-y-3">
+        <div>
+          <label class="text-xs text-slate-600">Código de acceso</label>
+          <input id="accessCode" type="password" required class="w-full border rounded-lg px-3 py-2" placeholder="••••••">
+        </div>
+        <button class="w-full px-4 py-2 rounded-lg bg-slate-900 text-white">Entrar</button>
+      </form>
+      <div id="gateMsg" class="mt-3 text-xs text-rose-600"></div>
+      <div id="gateOk" class="mt-3 text-xs text-emerald-600"></div>
+      <div id="gateLoading" class="mt-3 text-xs text-slate-500 hidden">Verificando…</div>
+    </div>
+  </div>
+
+  <!-- App -->
+  <div id="app" class="hidden-hard">
+    <!-- Header -->
+    <header class="sticky top-0 z-20 bg-white/80 backdrop-blur border-b">
+      <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-slate-900"></div>
+          <div>
+            <h1 class="text-lg font-semibold">HERPLUS – Panel Admin</h1>
+            <p class="text-xs text-slate-500">Altas, red de referidos, reparto y pagos</p>
+          </div>
+        </div>
+        <!-- Link corporativo con Copiar + QR -->
+        <div class="flex items-center gap-2">
+          <div class="text-xs">
+            Link corporativo:
+            <span id="corpLink" class="mono bg-slate-100 px-2 py-1 rounded">registro.html?ref=HERPLUS</span>
+          </div>
+          <button id="btnCopyCorp" class="px-3 py-1.5 rounded-lg bg-slate-900 text-white text-xs">Copiar</button>
+          <button id="btnQRCorp" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white text-xs">QR</button>
+          <button id="btnLeave" class="px-3 py-1.5 rounded-lg bg-slate-900 text-white text-xs">Salir</button>
+        </div>
+      </div>
     </header>
 
-    <section id="about">
-        <h2>Sobre Nuestro Plan</h2>
-        <p>Nuestro plan de negocio está cuidadosamente diseñado para ofrecer soluciones innovadoras que se adaptan a tus necesidades específicas. Con un enfoque en la sostenibilidad y el crecimiento a largo plazo, te ayudamos a alcanzar tus metas con confianza. También buscamos todas las maneras de que el usuario tenga los mejores beneficios para que pueda generar las mejores ganancias con nuestra red de afiliado, cada persona que puedas invitar obtendrás ganancias por cada compra o venta que el aria en la app ahora te muestro cuantos niveles tenemos cuanto porcentaje ganas por nivel y por cuantas personas está formado cada nivel. </p>
-        <ul>
-            <li>
-                Ejemplo: Cada persona hace una compra de 1,250 Lempiras, el listado esta formado por Nivel, Porcentaje por persona, Personas, Ganancias.
-            </li>
-        </ul>    
-        <ul>
-            <li>
-                Por tu compras o ventas obtiens un 5% de beneficio.
-            </li>
-        </ul>
-        <ul>  
-            <li>
-                Nivel#1---Porcentaje=1.25% --- Personas=6 --- Ganancias=62.5 Lempiras.
-            </li>
-            <li>
-                Nivel#2---Porcentaje=1%  ---  Personas=36  ---  Ganancias=93.75 Lempiras.
-            </li>
-            <li>
-                Nivel#3---Porcentaje=0.75%  ---  Personas=216  ---  Ganancias=2,025 Lempiras.
-            </li>
-            <li>
-                Nivel#4---Porcentaje=0.50%  ---  Personas=1,296  ---  Ganancias=8,100 Lempiras.
-            </li>
-            <li>
-                Nivel#5---Porcentaje=0.35%---Personas=7,776---Ganancias=34,020 Lempiras.
-            </li>
-            <li>
-                Nivel#6---Porcentaje=0.25%---Personas=46,656---Ganancias=145,800 Lempiras.
-            </li>
-            <li>
-                Nivel#7---Porcentaje=0.20%---Personas=279,936---Ganancias=699,840.
-            </li>
-        </ul>
-        <p>Estos son los niveles con el mínimo de personas el sistema te deja tener hasta 200 personas invitadas directamente por tu link para que con el Nivel#2 veas excelentes ganancias ya sabrás tú que hacer para obtener mejores resultados.</p>      
-         <p>Y como comento esto es un ejemplo semana o mensual pero la realidad que con todo lo que lograremos en la app no solo eso consumiriamos ya que igualmete tendremos, Restaurantes de comida rapida de tu franquicia favorita, productos aun mas comodos, Colaboraciones para que puedas comprar tu provicion por la app con servicio a domicilio sin que tu te molestes por ello y mucho mas, espero estes en cada paso de desarollo y generes mucho dinero con nosotros. EL FUTURO ES AHORA Y TU ESTAS LISTO PARA RESIVIR EL TUYO.</p>
-    </section>
-
-    <section id="features">
-        <h2>Características Clave</h2>
-        <div class="feature-grid">
-            <div class="feature-item">
-                <h3>Innovación</h3>
-                <p>Implementamos las últimas tendencias y tecnologías para mantenerte a la vanguardia.</p>
-            </div>
-            <div class="feature-item">
-                <h3>Estrategias Personalizadas</h3>
-                <p>Cada plan es único, adaptado a tus objetivos y circunstancias.</p>
-            </div>
-            <div class="feature-item">
-                <h3>Soporte Continuo</h3>
-                <p>Te acompañamos en cada paso del camino con nuestro soporte dedicado.</p>
-            </div>
+    <main class="max-w-7xl mx-auto px-4 py-6">
+      <!-- KPIs -->
+      <div class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-4 mb-4">
+        <div class="glass rounded-xl p-4 shadow">
+          <div class="text-xs text-slate-500">Pendientes</div>
+          <div id="kpiPend" class="text-2xl font-bold">0</div>
         </div>
-    </section>
+        <div class="glass rounded-xl p-4 shadow">
+          <div class="text-xs text-slate-500">Activos</div>
+          <div id="kpiAct" class="text-2xl font-bold">0</div>
+        </div>
+        <div class="glass rounded-xl p-4 shadow">
+          <div class="text-xs text-slate-500">
+            Saldo corporativo (<span id="lblCorpPct">70</span>%)
+          </div>
+          <div id="kpiCorp70" class="text-2xl font-bold">L 0</div>
+        </div>
+        <div class="glass rounded-xl p-4 shadow">
+          <div class="text-xs text-slate-500">
+            Saldo de red (<span id="lblNetPct">30</span>%)
+          </div>
+          <div id="kpiInv30" class="text-2xl font-bold">L 0</div>
+        </div>
+        <div class="glass rounded-xl p-4 shadow">
+          <div class="text-xs text-slate-500">Total 100%</div>
+          <div id="kpiTotal100" class="text-2xl font-bold">L 0</div>
+        </div>
+        <div class="glass rounded-xl p-4 shadow">
+          <div class="text-xs text-slate-500">Red acumulado</div>
+          <div id="kpiRedAcum30" class="text-2xl font-bold">L 0</div>
+        </div>
+        <div class="glass rounded-xl p-4 shadow">
+          <div class="text-xs text-slate-500">Pendiente en wallets (socios)</div>
+          <div id="kpiWalletsPend" class="text-2xl font-bold">L 0</div>
+        </div>
+      </div>
 
-    <section id="cta">
-        <h2>¿Estás Listo para Comenzar?</h2>
-        <p>Da el primer paso hacia el éxito hoy mismo. Estamos aquí para ayudarte a transformar tu visión en realidad, Nosotros creemos en ti solo falta que tu creas en nosotros.</p>
-        <a href="https://digimartbox.shop/dashboard/Socio/50496173031" class="btn">Registrate aqui</a>
-    </section>
+      <!-- NAV -->
+      <div class="glass rounded-xl p-2 flex flex-wrap gap-2 shadow">
+        <button class="tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-white" data-tab="tab-pendientes">Pendientes</button>
+        <button class="tab-btn px-3 py-1.5 rounded-lg hover:bg-slate-200" data-tab="tab-activos">Socios activos</button>
+        <button class="tab-btn px-3 py-1.5 rounded-lg hover:bg-slate-200" data-tab="tab-corte">Pagos / Corte</button>
+        <button class="tab-btn px-3 py-1.5 rounded-lg hover:bg-slate-200" data-tab="tab-arbol">Árbol</button>
+        <button class="tab-btn px-3 py-1.5 rounded-lg hover:bg-slate-200" data-tab="tab-config">Config</button>
+      </div>
 
-    <footer>
-        <p>&copy; 2024 Digimartbox. Todos los derechos reservados.</p>
-    </footer>
-    <script src="https://static.elfsight.com/platform/platform.js" data-use-service-core defer></script>
-<div class="elfsight-app-fcf12be2-92ff-4ec1-ab53-375a93d07de8" data-elfsight-app-lazy></div>
-    <script src="https://static.elfsight.com/platform/platform.js" data-use-service-core defer></script>
-<div class="elfsight-app-ca91fc48-234a-4779-b722-75b9ee36451f" data-elfsight-app-lazy></div>
+      <!-- PENDIENTES -->
+      <section id="tab-pendientes" class="tab mt-4">
+        <div class="glass rounded-xl p-4 shadow">
+          <div class="flex items-center justify-between gap-3">
+            <h3 class="font-semibold">Usuarios pendientes de pago</h3>
+            <input id="searchPend" class="w-64 border rounded-lg px-3 py-2" placeholder="Buscar por usuario/correo/WhatsApp">
+          </div>
+          <div id="loadPendState" class="text-xs text-slate-500 mt-2">Cargando…</div>
+          <div class="overflow-auto mt-3">
+            <table class="min-w-full text-sm">
+              <thead>
+                <tr class="bg-slate-50">
+                  <th class="text-left p-2">Usuario</th>
+                  <th class="text-left p-2">Email</th>
+                  <th class="text-left p-2">WhatsApp</th>
+                  <th class="text-left p-2">Sponsor</th>
+                  <th class="text-left p-2">Código (ingreso)</th>
+                  <th class="text-left p-2">Airtm</th>
+                  <th class="text-left p-2">Creado</th>
+                  <th class="text-left p-2">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tbPend"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ACTIVOS -->
+      <section id="tab-activos" class="tab hidden mt-4">
+        <div class="glass rounded-xl p-4 shadow">
+          <div class="flex items-center justify-between gap-3">
+            <h3 class="font-semibold">Socios activos</h3>
+            <input id="searchAct" class="w-64 border rounded-lg px-3 py-2" placeholder="Buscar por usuario/correo/WhatsApp">
+          </div>
+          <div id="loadActState" class="text-xs text-slate-500 mt-2">Cargando…</div>
+          <div class="overflow-auto mt-3">
+            <table class="min-w-full text-sm">
+              <thead>
+                <tr class="bg-slate-50">
+                  <th class="text-left p-2">Usuario</th>
+                  <th class="text-left p-2">Email</th>
+                  <th class="text-left p-2">WhatsApp</th>
+                  <th class="text-left p-2">Sponsor</th>
+                  <th class="text-left p-2">Balance</th>
+                  <th class="text-left p-2">Airtm</th>
+                  <th class="text-left p-2">Alta</th>
+                  <th class="text-left p-2">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tbAct"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- CORTE -->
+      <section id="tab-corte" class="tab hidden mt-4">
+        <div class="glass rounded-xl p-4 shadow">
+          <div class="grid md:grid-cols-2 gap-4">
+            <div class="p-3 border rounded-lg bg-indigo-50 border-indigo-200">
+              <p class="text-sm">
+                📅 <b>Fecha de corte:</b> <span id="cutDate" class="font-semibold"></span> (fin de mes).<br/>
+                💸 <b>Pagos:</b> en la <b>semana siguiente</b> se paga el balance por <b>Airtm</b>.
+              </p>
+            </div>
+            <!-- Widget empresa -->
+            <div class="p-3 border rounded-lg bg-emerald-50 border-emerald-200">
+              <div class="grid grid-cols-3 gap-2">
+                <div>
+                  <p class="text-xs text-slate-600">Corporativo (<span id="lblCorpPct2">70</span>%)</p>
+                  <p id="company70" class="text-lg font-bold">L 0</p>
+                </div>
+                <div>
+                  <p class="text-xs text-slate-600">Red (<span id="lblNetPct2">30</span>%)</p>
+                  <p id="company30" class="text-lg font-bold">L 0</p>
+                </div>
+                <div>
+                  <p class="text-xs text-slate-600">Total 100%</p>
+                  <p id="company100" class="text-lg font-bold">L 0</p>
+                </div>
+              </div>
+              <div class="mt-2 flex gap-2 flex-wrap">
+                <button id="btnReset70" class="px-3 py-1.5 rounded bg-emerald-600 text-white text-xs">Registrar pago / Limpiar Corporativo</button>
+                <button id="btnReset30" class="px-3 py-1.5 rounded bg-emerald-700 text-white text-xs">Registrar pago / Limpiar Red</button>
+                <button id="btnResetAll" class="px-3 py-1.5 rounded bg-emerald-800 text-white text-xs">Limpiar ambos (100%)</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between gap-3 mt-4">
+            <h3 class="font-semibold">Balances para pago (socios)</h3>
+            <button id="refreshBalances" class="px-3 py-2 rounded-lg bg-slate-900 text-white">Actualizar</button>
+          </div>
+          <div id="loadBalState" class="text-xs text-slate-500 mt-2">Cargando…</div>
+          <div class="overflow-auto mt-3">
+            <table class="min-w-full text-sm">
+              <thead>
+                <tr class="bg-slate-50">
+                  <th class="text-left p-2">Usuario</th>
+                  <th class="text-left p-2">Email</th>
+                  <th class="text-left p-2">Balance</th>
+                  <th class="text-left p-2">Airtm</th>
+                  <th class="text-left p-2">Acción</th>
+                </tr>
+              </thead>
+              <tbody id="tbBalances"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ÁRBOL 10 niveles (Tabla + Pirámide) -->
+      <section id="tab-arbol" class="tab hidden mt-4">
+        <div class="glass rounded-xl p-4 shadow">
+          <div class="flex items-center gap-3 flex-wrap">
+            <input id="rootUid" class="w-72 border rounded-lg px-3 py-2 mono" placeholder="UID raíz (sponsor)">
+            <button id="loadTree" class="px-3 py-2 rounded-lg bg-slate-900 text-white">Cargar árbol</button>
+            <button id="deleteFromTree" class="px-3 py-2 rounded-lg bg-rose-600 text-white">Eliminar socio</button>
+            <span id="treeState" class="text-xs text-slate-500">—</span>
+          </div>
+
+          <!-- Barra de insignias (del root) -->
+          <div id="badgeBar" class="mt-3 flex flex-wrap items-center gap-2 text-base"></div>
+
+          <!-- Barra de Rango (cascada) -->
+          <div id="rankBar" class="mt-2 p-3 rounded-xl border bg-white text-sm flex items-center justify-between">
+            <div>
+              <div class="font-semibold" id="rankTitle">Rango actual: R0</div>
+              <div class="text-xs text-slate-600" id="rankName">—</div>
+              <div class="text-xs text-slate-600" id="rankHint">Necesitas 4 directos (L1) para R1.</div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="text-2xl" id="rankBadge" aria-label="insignia rango">⬜</div>
+              <div class="w-48">
+                <div class="h-2 rounded bg-slate-100 overflow-hidden">
+                  <div id="rankProgress" class="h-full bg-emerald-500" style="width:0%"></div>
+                </div>
+                <div class="text-[10px] text-right mt-1 text-slate-500" id="rankDepthText">0 / 10</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Controles de vista -->
+          <div class="mt-3 flex flex-wrap gap-2">
+            <button id="viewTableBtn" class="px-3 py-1.5 rounded-lg bg-slate-900 text-white text-xs">Vista Tabla</button>
+            <button id="viewPyramidBtn" class="px-3 py-1.5 rounded-lg bg-slate-200 text-xs">Vista Pirámide</button>
+          </div>
+
+          <!-- Contadores -->
+          <div id="levelCounters" class="grid md:grid-cols-5 gap-2 mt-4"></div>
+
+          <!-- Grid 10 niveles (tabla) -->
+          <div id="treeGrid" class="grid md:grid-cols-2 lg:grid-cols-5 gap-4 mt-4"></div>
+
+          <!-- Vista Pirámide -->
+          <div id="pyramidWrap" class="hidden mt-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2 text-xs text-slate-600">
+                <span>Nodos por nivel:</span>
+                <input id="maxPerLevel" type="number" min="1" value="120" class="w-20 border rounded px-2 py-1 text-xs">
+              </div>
+              <button id="exportSVG" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white text-xs">Exportar SVG</button>
+            </div>
+
+            <div id="pyrLegend" class="mt-3 flex flex-wrap gap-2 text-xs"></div>
+            <div id="levelSummary" class="mt-2 text-xs text-slate-600"></div>
+
+            <div id="pyramidContainer" class="relative mt-2 bg-white rounded-xl border overflow-auto" style="height:560px;"></div>
+            <div id="pyrTooltip" class="hidden absolute z-20 text-xs bg-slate-900 text-white px-2 py-1 rounded shadow"
+                 style="pointer-events:none; max-width:260px; white-space:pre-wrap;"></div>
+
+            <p class="text-xs text-slate-500 mt-2">
+              * La fila superior es el root. Debajo, cada fila representa un nivel (1 a 10).
+            </p>
+          </div>
+
+          <p class="text-xs text-slate-500 mt-3">* Click en un usuario (vista tabla) para centrar el árbol en él.</p>
+        </div>
+      </section>
+
+      <!-- CONFIG -->
+      <section id="tab-config" class="tab hidden mt-4">
+        <div class="glass rounded-xl p-4 shadow">
+          <h3 class="font-semibold mb-2">Parámetros</h3>
+
+          <!-- BLOQUE CONFIG ACTUALIZADO: Cuota, % red, Pool y Distribución de niveles (100%) -->
+          <div class="grid md:grid-cols-3 gap-4">
+            <!-- Cuota -->
+            <div class="p-3 border rounded-lg">
+              <div class="text-xs text-slate-500 mb-1">Cuota de activación (HNL)</div>
+              <input id="feeInput" type="number" min="1" step="1"
+                     class="w-full border rounded-lg px-3 py-2 mono" placeholder="1000">
+              <div class="flex gap-2 mt-2">
+                <button id="saveFee" class="px-3 py-1.5 rounded bg-slate-900 text-white text-xs">Guardar</button>
+                <span id="feeMsg" class="text-xs text-slate-500"></span>
+              </div>
+              <div class="text-xs text-slate-500 mt-2">Actual: <span class="mono" id="cfgFee">L 1,000</span></div>
+            </div>
+
+            <!-- % Red + Monto base (pool) -->
+            <div class="p-3 border rounded-lg">
+              <div class="text-xs text-slate-500 mb-1">Porcentaje para la red (%)</div>
+              <input id="distPercentInput" type="number" min="1" max="100" step="0.1"
+                     class="w-full border rounded-lg px-3 py-2 mono" placeholder="30">
+              <div class="text-xs text-slate-500 mt-2">Monto base de red (cuota × %): <b id="poolAmount">L 0</b></div>
+              <div class="flex gap-2 mt-2">
+                <button id="saveDistPercent" class="px-3 py-1.5 rounded bg-slate-900 text-white text-xs">Guardar % red</button>
+                <span id="distMsg" class="text-xs"></span>
+              </div>
+              <div class="text-[11px] text-slate-500 mt-2">
+                Este monto (pool) se distribuye entre niveles. La suma de niveles debe ser <b>100%</b> del pool.
+              </div>
+            </div>
+
+            <!-- Distribución por niveles -->
+            <div class="p-3 border rounded-lg">
+              <div class="text-xs text-slate-500 mb-2">Distribución por niveles (10 inputs, debe sumar <b>100%</b> del pool)</div>
+              <div class="grid grid-cols-5 gap-2">
+                <div><label class="hint">Nivel 1</label><input id="p1" type="number" step="0.1" class="w-full border rounded px-2 py-1 mono"></div>
+                <div><label class="hint">Nivel 2</label><input id="p2" type="number" step="0.1" class="w-full border rounded px-2 py-1 mono"></div>
+                <div><label class="hint">Nivel 3</label><input id="p3" type="number" step="0.1" class="w-full border rounded px-2 py-1 mono"></div>
+                <div><label class="hint">Nivel 4</label><input id="p4" type="number" step="0.1" class="w-full border rounded px-2 py-1 mono"></div>
+                <div><label class="hint">Nivel 5</label><input id="p5" type="number" step="0.1" class="w-full border rounded px-2 py-1 mono"></div>
+                <div><label class="hint">Nivel 6</label><input id="p6" type="number" step="0.1" class="w-full border rounded px-2 py-1 mono"></div>
+                <div><label class="hint">Nivel 7</label><input id="p7" type="number" step="0.1" class="w-full border rounded px-2 py-1 mono"></div>
+                <div><label class="hint">Nivel 8</label><input id="p8" type="number" step="0.1" class="w-full border rounded px-2 py-1 mono"></div>
+                <div><label class="hint">Nivel 9</label><input id="p9" type="number" step="0.1" class="w-full border rounded px-2 py-1 mono"></div>
+                <div><label class="hint">Nivel 10</label><input id="p10" type="number" step="0.1" class="w-full border rounded px-2 py-1 mono"></div>
+              </div>
+              <div class="flex items-center gap-2 mt-2">
+                <button id="savePercents" class="px-3 py-1.5 rounded bg-slate-900 text-white text-xs">Guardar % niveles</button>
+                <span id="pcMsg" class="text-xs"></span>
+              </div>
+              <div class="text-xs text-slate-500 mt-2">Actual: <span id="cfgDist" class="mono">[10,6,4,3,2,1.5,1.2,1,0.7,0.6] %</span></div>
+            </div>
+          </div>
+          <!-- /BLOQUE CONFIG ACTUALIZADO -->
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Modal QR corporativo -->
+  <div id="qrModal" class="modal hidden">
+    <div class="glass rounded-xl shadow max-w-sm w-full p-5">
+      <div class="flex items-center justify-between">
+        <h3 class="font-semibold">QR – Link corporativo</h3>
+        <button id="qrClose" class="px-3 py-1.5 rounded bg-slate-200">Cerrar</button>
+      </div>
+      <div class="mt-3">
+        <div id="qrBox" class="bg-white inline-block p-3 rounded-lg"></div>
+        <div class="mt-3 flex justify-between items-center">
+          <span id="qrText" class="mono text-xs bg-slate-100 px-2 py-1 rounded"></span>
+          <button id="qrDownload" class="px-3 py-1.5 rounded bg-indigo-600 text-white text-xs">Descargar PNG</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal genérico texto -->
+  <div id="pwdModal" class="modal hidden">
+    <div class="glass rounded-xl shadow max-w-md w-full p-5">
+      <h3 id="pwdTitle" class="font-semibold mb-2">Dato</h3>
+      <div id="pwdContent" class="mono bg-slate-100 rounded p-3 text-sm break-words"></div>
+      <div class="mt-4 flex justify-end">
+        <button id="pwdClose" class="px-3 py-1.5 rounded bg-slate-900 text-white text-sm">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal detalle nodo (pirámide) -->
+  <div id="nodeModal" class="modal hidden">
+    <div class="glass rounded-xl shadow max-w-lg w-full p-5">
+      <div class="flex items-center justify-between">
+        <h3 class="font-semibold">Detalle de miembro</h3>
+        <button id="nodeClose" class="px-3 py-1.5 rounded bg-slate-200">Cerrar</button>
+      </div>
+      <div id="nodeDetail" class="mt-3 text-sm space-y-1"></div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast">Copiado</div>
+
+  <!-- Firebase v8 (App + Firestore) -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+  <script>
+    // ===== Firebase =====
+    const firebaseConfig = {
+      apiKey: "AIzaSyD_v8yXx1W6zcGFXXMHeNJh0RSzbnO-j84",
+      authDomain: "herplus.firebaseapp.com",
+      projectId: "herplus",
+      storageBucket: "herplus.appspot.com",
+      messagingSenderId: "556494279952",
+      appId: "1:556494279952:web:f788776f50840b28434195"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // ===== Utils / UI =====
+    const $ = (id)=>document.getElementById(id);
+    function show(el){ el.classList.remove('hidden','hidden-hard'); }
+    function hide(el){ el.classList.add('hidden'); }
+    function hideHard(el){ el.classList.add('hidden-hard'); }
+    function esc(s){ return String(s ?? "").replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m])); }
+    function debounce(fn, ms=250){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), ms); }; }
+    function endOfMonth(d=new Date()) { return new Date(d.getFullYear(), d.getMonth()+1, 0); }
+    function HNL(n){ return "L " + Number(n||0).toLocaleString("es-HN", { minimumFractionDigits: 0, maximumFractionDigits: 0 }); }
+    function toast(msg="Hecho"){ const t=$("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),1200); }
+    function escHtml(s){ return String(s??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+    async function sha256(text){
+      const enc = new TextEncoder().encode(text);
+      const buf = await crypto.subtle.digest("SHA-256", enc);
+      return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,"0")).join("");
+    }
+
+    // ===== Sesión por código (solo cliente) =====
+    const SESSION_KEY = "hp_admin_session";
+    function setSession(){ localStorage.setItem(SESSION_KEY, String(Date.now())); }
+    function clearSession(){ localStorage.removeItem(SESSION_KEY); }
+    function hasSession(){ return !!localStorage.getItem(SESSION_KEY); }
+
+    // ===== Negocio (config y parámetros) =====
+    const MAX_LEVELS = 10;
+    const COMPANY_REF = "__COMPANY__"; // evitamos colisión con UIDs reales
+
+    // Config dinámico
+    let ENTRY_FEE_HNL = 1000;  // cuota
+    let DIST_PERCENT  = 30;    // % de la cuota que va a la red (pool)
+    // PERCENTS ahora deben sumar 100 (porcentaje del pool)
+    let PERCENTS      = [10,6,4,3,2,1.5,1.2,1,0.7,0.6];
+
+    function calcPoolAmount(fee = ENTRY_FEE_HNL, pct = DIST_PERCENT){
+      return Math.round( (Number(fee||0) * Number(pct||0)) / 100 );
+    }
+
+    // Reglas de insignias/rangos (sin cambios)
+    const REQ_FIRST_LEVEL = 4;
+    const BADGES = {1:"🥇",2:"🥈",3:"🥉",4:"🏅",5:"🎖️",6:"🏆",7:"💎",8:"⭐",9:"🌟",10:"🔥"};
+    const RANK_BADGE = {0:"⬜",1:"🥉",2:"🥈",3:"🥇",4:"🏅",5:"🎖️",6:"🏆",7:"💎",8:"⭐",9:"🌟",10:"🔥"};
+    const RANK_NAME  = {0:"Sin rango",1:"Bronce",2:"Plata",3:"Oro",4:"Rubí",5:"Zafiro",6:"Esmeralda",7:"Diamante",8:"Estrella",9:"Leyenda",10:"Élite"};
+
+    const cfgRef = db.collection("config").doc("global");
+    const adminWalletRef = db.collection("adminWallet").doc("company");
+    const metricsRef = db.collection("metrics").doc("global");
+
+    // ===== Inicialización (config, company wallet, metrics) =====
+    (async ()=>{
+      const snap = await cfgRef.get();
+      if (!snap.exists){
+        await cfgRef.set({
+          entryFee: ENTRY_FEE_HNL,
+          percents: PERCENTS,
+          distPercent: DIST_PERCENT,
+          adminCodeHash: await sha256("280917")
+        }, { merge:true });
+      } else {
+        const d = snap.data()||{};
+        const updates = {};
+        if (typeof d.entryFee !== "number") updates.entryFee = ENTRY_FEE_HNL;
+        if (!Array.isArray(d.percents) || d.percents.length!==10) updates.percents = PERCENTS;
+        if (typeof d.distPercent !== "number") updates.distPercent = DIST_PERCENT;
+        if (!d.adminCodeHash) updates.adminCodeHash = await sha256("280917");
+        if (Object.keys(updates).length) await cfgRef.set(updates, { merge:true });
+      }
+      const wsnap = await adminWalletRef.get();
+      if (!wsnap.exists){
+        await adminWalletRef.set({
+          balance70: 0, // usaremos “corporativo”
+          balance30: 0, // usaremos “red”
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      }
+      const msnap = await metricsRef.get();
+      if (!msnap.exists){
+        await metricsRef.set({
+          network30Accum: 0,       // acumulado histórico de la red (pool)
+          totalEntryFees: 0,       // total de cuotas cobradas
+          paidToUsers: 0,          // (opcional) acum pagado a socios
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge:true });
+      }
+    })();
+
+    // === Suscripción en vivo a config y wallets/metrics ===
+    let unsubCfg=null, unsubWallet=null, unsubMetrics=null;
+
+    function subscribeLive(){
+      // Config en vivo (fee, distPercent, percents)
+      unsubCfg = cfgRef.onSnapshot((doc)=>{
+        const d = doc.exists ? doc.data() : {};
+
+        // Fee
+        if (typeof d.entryFee === "number" && isFinite(d.entryFee) && d.entryFee>0){
+          ENTRY_FEE_HNL = Math.round(d.entryFee);
+          $("cfgFee").textContent = HNL(ENTRY_FEE_HNL);
+          const feeInput = $("feeInput");
+          if (feeInput && !feeInput.matches(":focus")) feeInput.value = ENTRY_FEE_HNL;
+        }
+
+        // % red (pool)
+        if (typeof d.distPercent === "number" && isFinite(d.distPercent) && d.distPercent>0){
+          DIST_PERCENT = Math.round(d.distPercent*10)/10;
+          const di = $("distPercentInput");
+          if (di && !di.matches(":focus")) di.value = DIST_PERCENT;
+        }
+
+        // Pool mostrado
+        $("poolAmount").textContent = HNL(calcPoolAmount());
+
+        // % niveles (deben sumar 100)
+        if (Array.isArray(d.percents) && d.percents.length===10){
+          PERCENTS = d.percents.map(Number);
+          $("cfgDist").textContent = `[${PERCENTS.join(", ")}] %`;
+          for (let i=1;i<=10;i++){
+            const el=$("p"+i);
+            if (el && !el.matches(":focus")) el.value = PERCENTS[i-1];
+          }
+        }
+
+        // Actualizar rótulos dinámicos “Corporativo/Red”
+        const corpPct = Math.max(0, Math.round((100 - DIST_PERCENT)*10)/10);
+        const netPct  = Math.max(0, Math.round(DIST_PERCENT*10)/10);
+        if ($("lblCorpPct"))  $("lblCorpPct").textContent  = String(corpPct);
+        if ($("lblNetPct"))   $("lblNetPct").textContent   = String(netPct);
+        if ($("lblCorpPct2")) $("lblCorpPct2").textContent = String(corpPct);
+        if ($("lblNetPct2"))  $("lblNetPct2").textContent  = String(netPct);
+      });
+
+      // Wallet empresa (corporativo/red) en vivo
+      unsubWallet = adminWalletRef.onSnapshot((s)=>{
+        const d = s.exists ? s.data() : {};
+        const corp = d.balance70 || 0; // corporativo
+        const red  = d.balance30 || 0; // red
+        const total = (corp + red) || 0;
+
+        $("kpiCorp70").textContent = HNL(corp);
+        $("kpiInv30").textContent  = HNL(red);
+        $("kpiTotal100").textContent= HNL(total);
+
+        $("company70").textContent = HNL(corp);
+        $("company30").textContent = HNL(red);
+        $("company100").textContent= HNL(total);
+      });
+
+      // Métricas en vivo
+      unsubMetrics = metricsRef.onSnapshot((s)=>{
+        const d = s.exists ? s.data() : {};
+        $("kpiRedAcum30").textContent = HNL(d.network30Accum || 0);
+      });
+    }
+
+    function unsubscribeLive(){
+      try{unsubCfg && unsubCfg();}catch(_){}; 
+      try{unsubWallet && unsubWallet();}catch(_){}; 
+      try{unsubMetrics && unsubMetrics();}catch(_){};
+    }
+
+    // ===== Handlers de Config =====
+    // Guardar cuota
+    $("saveFee").addEventListener("click", async ()=>{
+      const v = Number($("feeInput").value);
+      if (!isFinite(v) || v <= 0) { $("feeMsg").textContent="Valor inválido."; $("feeMsg").style.color="#b91c1c"; return; }
+      try{
+        await cfgRef.set({ entryFee: Math.round(v) }, { merge:true });
+        $("feeMsg").textContent="Guardado ✓"; $("feeMsg").style.color="#16a34a";
+        $("poolAmount").textContent = HNL(calcPoolAmount(Math.round(v), Number($("distPercentInput").value || DIST_PERCENT)));
+        setTimeout(()=>{$("feeMsg").textContent="";},1800);
+      }catch(e){ $("feeMsg").textContent=e.message||"Error"; $("feeMsg").style.color="#b91c1c"; }
+    });
+
+    // Guardar % red
+    $("saveDistPercent").addEventListener("click", async ()=>{
+      const v = Number($("distPercentInput").value);
+      if (!isFinite(v) || v <= 0 || v > 100) { $("distMsg").textContent="Valor inválido (1–100%)."; $("distMsg").style.color="#b91c1c"; return; }
+      try{
+        const vv = Math.round(v*10)/10;
+        await cfgRef.set({ distPercent: vv }, { merge:true });
+        $("distMsg").textContent="Guardado ✓"; $("distMsg").style.color="#16a34a";
+        $("poolAmount").textContent = HNL(calcPoolAmount(Number($("feeInput").value||ENTRY_FEE_HNL), vv));
+        setTimeout(()=>{$("distMsg").textContent="";},1800);
+      }catch(e){ $("distMsg").textContent=e.message||"Error"; $("distMsg").style.color="#b91c1c"; }
+    });
+
+    // Guardar % niveles (debe sumar 100)
+    $("savePercents").addEventListener("click", async ()=>{
+      const vals=[];
+      for(let i=1;i<=10;i++){
+        const v=Number($("p"+i).value);
+        if(!isFinite(v)||v<0){$("pcMsg").textContent="Valores inválidos";$("pcMsg").style.color="#b91c1c";return;}
+        vals.push(Math.round(v*10)/10);
+      }
+      const sum = vals.reduce((a,b)=>a+b,0);
+      if (Math.abs(sum-100) > 1e-6){
+        $("pcMsg").textContent=`La suma debe ser 100%. Actual: ${Math.round(sum*10)/10}%`;
+        $("pcMsg").style.color="#b91c1c"; return;
+      }
+      try{
+        await cfgRef.set({ percents: vals }, { merge:true });
+        $("pcMsg").textContent="Porcentajes guardados ✓"; $("pcMsg").style.color="#16a34a";
+        setTimeout(()=>{$("pcMsg").textContent="";},1800);
+      }catch(e){ $("pcMsg").textContent=e.message||"Error"; $("pcMsg").style.color="#b91c1c"; }
+    });
+
+    // Recalcular pool al teclear (sin guardar aún)
+    ["feeInput","distPercentInput"].forEach(id=>{
+      const el = $(id);
+      if (!el) return;
+      el.addEventListener("input", ()=>{
+        const fee = Number($("feeInput").value)||ENTRY_FEE_HNL;
+        const pct = Number($("distPercentInput").value)||DIST_PERCENT;
+        $("poolAmount").textContent = HNL(calcPoolAmount(fee, pct));
+      });
+    });
+  </script>
+  <!-- BLOQUE 2/2 — pega este <script> inmediatamente después del </script> del Bloque 1 (antes de </body>) -->
+<script>
+  // ===== NAV por pestañas =====
+  document.querySelectorAll(".tab-btn").forEach(b=>{
+    b.addEventListener("click", ()=>{
+      document.querySelectorAll(".tab-btn").forEach(x=>x.classList.remove("bg-slate-900","text-white"));
+      b.classList.add("bg-slate-900","text-white");
+      document.querySelectorAll(".tab").forEach(x=>x.classList.add("hidden"));
+      $(b.dataset.tab).classList.remove("hidden");
+    });
+  });
+
+  // ===== Búsqueda en tablas =====
+  function filterTable(inputEl, tableBodyId) {
+    const term = inputEl.value.toLowerCase();
+    const rows = $(tableBodyId).querySelectorAll("tr");
+    rows.forEach(r=>{ r.style.display = r.textContent.toLowerCase().includes(term) ? "" : "none"; });
+  }
+  $("searchPend").addEventListener("input", debounce(()=>filterTable($("searchPend"),"tbPend")));
+  $("searchAct").addEventListener("input", debounce(()=>filterTable($("searchAct"),"tbAct")));
+
+  // ===== Helpers de datos =====
+  async function getWallet(uid){
+    const s = await db.collection("wallets").doc(uid).get();
+    return s.exists ? (s.data().balance||0) : 0;
+  }
+
+  // ===== KPIs: wallets pendientes (paginado seguro) =====
+  async function calcWalletsPend(){
+    let total=0, last=null, ref = db.collection("wallets").orderBy(firebase.firestore.FieldPath.documentId());
+    while (true){
+      const q = last ? ref.startAfter(last).limit(1000) : ref.limit(1000);
+      const snap = await q.get();
+      if (snap.empty) break;
+      snap.forEach(d => total += Number(d.data().balance||0));
+      last = snap.docs[snap.docs.length-1];
+      if (snap.size < 1000) break;
+    }
+    $("kpiWalletsPend").textContent = HNL(total);
+  }
+
+  // ===== CARGAS =====
+  async function loadPendientes() {
+    $("loadPendState").textContent = "Cargando…";
+    const tbody = $("tbPend"); tbody.innerHTML = "";
+    try{
+      const q = await db.collection("users").where("status","==","pending").get();
+      const docs = q.docs.slice().sort((a,b)=> (a.data().createdAt?.toMillis?.()||0) - (b.data().createdAt?.toMillis?.()||0));
+      $("kpiPend").textContent = String(docs.length);
+
+      const uids = docs.map(d=>d.data().uid);
+      const payoutSnaps = await Promise.all(uids.map(uid => db.collection("payoutProfiles").doc(uid).get()));
+      const airtmByUid = new Map(uids.map((uid,i)=> {
+        const d = payoutSnaps[i].exists ? payoutSnaps[i].data() : null;
+        return [uid, d && d.airtm ? d.airtm : null];
+      }));
+
+      for (const d of docs) {
+        const u = d.data();
+        const airtm = airtmByUid.get(u.uid);
+        const waLink = u.whatsapp ? `https://wa.me/${u.whatsapp.replace(/\D/g,'')}` : "#";
+        const isCorp = (u.sponsorId === COMPANY_REF || !u.sponsorId);
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td class="p-2">
+            ${esc(u.username)||"-"}
+            <div class="text-xs text-slate-500 mono">${esc(u.uid)}</div>
+            ${isCorp ? '<span class="badge bg-amber-100 text-amber-800">Corporativo</span>' : ''}
+          </td>
+          <td class="p-2">${esc(u.email)||"-"}</td>
+          <td class="p-2">${esc(u.whatsapp)||"-"}</td>
+          <td class="p-2">${esc(u.sponsorUsername||u.sponsorId)||"-"}</td>
+          <td class="p-2">${esc(u.movieCodeEntered)||"-"}</td>
+          <td class="p-2 text-xs">${airtm?(esc(airtm.handle||"")):""} ${airtm&&airtm.email?("<br>"+esc(airtm.email)):""}</td>
+          <td class="p-2">${u.createdAt && u.createdAt.toDate ? esc(u.createdAt.toDate().toLocaleString("es-HN")):""}</td>
+          <td class="p-2">
+            <div class="flex flex-col gap-1">
+              <a href="${waLink}" target="_blank" class="px-2 py-1 rounded bg-emerald-600 text-white text-xs text-center">WhatsApp</a>
+              <button class="px-2 py-1 rounded bg-slate-900 text-white text-xs" data-act="${esc(u.uid)}">Confirmar pago</button>
+              <button class="px-2 py-1 rounded bg-rose-600 text-white text-xs" data-del="${esc(u.uid)}">Eliminar</button>
+            </div>
+          </td>
+        `;
+        tr.querySelector('[data-act]').addEventListener('click', ()=> confirmarPago(u.uid));
+        tr.querySelector('[data-del]').addEventListener('click', ()=> eliminarSocio(u.uid));
+        tbody.appendChild(tr);
+      }
+      $("loadPendState").textContent = docs.length ? "" : "Sin pendientes.";
+    }catch(e){
+      $("loadPendState").textContent = e.message || "Error al cargar pendientes.";
+    }
+  }
+
+  async function loadActivos() {
+    $("loadActState").textContent = "Cargando…";
+    const tbody = $("tbAct"); tbody.innerHTML = "";
+    try{
+      const q = await db.collection("users").where("status","==","active").limit(800).get();
+      const docs = q.docs.slice().sort((a,b)=> (b.data().createdAt?.toMillis?.()||0) - (a.data().createdAt?.toMillis?.()||0));
+      $("kpiAct").textContent = String(docs.length);
+
+      const uids = docs.map(d=>d.data().uid);
+      const [walletSnaps, payoutSnaps] = await Promise.all([
+        Promise.all(uids.map(uid => db.collection("wallets").doc(uid).get())),
+        Promise.all(uids.map(uid => db.collection("payoutProfiles").doc(uid).get()))
+      ]);
+      const walletByUid = new Map(uids.map((uid,i)=> [uid, walletSnaps[i].exists?(walletSnaps[i].data().balance||0):0]));
+      const airtmByUid  = new Map(uids.map((uid,i)=> {
+        const d = payoutSnaps[i].exists ? payoutSnaps[i].data() : null;
+        return [uid, d && d.airtm ? d.airtm : null];
+      }));
+
+      for (const d of docs) {
+        const u = d.data();
+        const bal = walletByUid.get(u.uid)||0;
+        const airtm = airtmByUid.get(u.uid);
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td class="p-2">
+            ${esc(u.username)||"-"}
+            <div class="text-xs text-slate-500 mono">${esc(u.uid)}</div>
+          </td>
+          <td class="p-2">${esc(u.email)||"-"}</td>
+          <td class="p-2">${esc(u.whatsapp)||"-"}</td>
+          <td class="p-2">${esc(u.sponsorUsername||u.sponsorId)||"-"}</td>
+          <td class="p-2 font-semibold">${HNL(bal)}</td>
+          <td class="p-2 text-xs">${airtm?(esc(airtm.handle||"")):""} ${airtm&&airtm.email?("<br>"+esc(airtm.email)):""}</td>
+          <td class="p-2">${u.activatedAt && u.activatedAt.toDate ? esc(u.activatedAt.toDate().toLocaleString("es-HN")):""}</td>
+          <td class="p-2">
+            <div class="flex flex-col gap-1">
+              <button class="px-2 py-1 rounded bg-indigo-600 text-white text-xs" data-tree="${esc(u.uid)}">Ver árbol</button>
+              <button class="px-2 py-1 rounded bg-sky-600 text-white text-xs" data-code="${esc(u.uid)}">Ver código</button>
+              <button class="px-2 py-1 rounded bg-rose-600 text-white text-xs" data-del="${esc(u.uid)}">Eliminar</button>
+            </div>
+          </td>
+        `;
+        tr.querySelector('[data-tree]').addEventListener('click', ()=> { $("rootUid").value=u.uid; document.querySelector('[data-tab="tab-arbol"]').click(); cargarArbol(u.uid); });
+        tr.querySelector('[data-code]').addEventListener('click', ()=> verCodigo(u.uid));
+        tr.querySelector('[data-del]').addEventListener('click', ()=> eliminarSocio(u.uid));
+        tbody.appendChild(tr);
+      }
+      $("loadActState").textContent = docs.length ? "" : "Sin activos.";
+    }catch(e){
+      $("loadActState").textContent = e.message || "Error al cargar activos.";
+    }
+  }
+
+  async function loadBalances(){
+    $("loadBalState").textContent = "Cargando…";
+    const tbody = $("tbBalances"); tbody.innerHTML = "";
+    try{
+      const uq = await db.collection("users").where("status","==","active").get();
+      const uids = uq.docs.map(d=>d.data().uid);
+      const [walletSnaps, payoutSnaps] = await Promise.all([
+        Promise.all(uids.map(uid => db.collection("wallets").doc(uid).get())),
+        Promise.all(uids.map(uid => db.collection("payoutProfiles").doc(uid).get()))
+      ]);
+
+      for (let i=0;i<uq.docs.length;i++){
+        const u = uq.docs[i].data();
+        const bal = walletSnaps[i].exists ? (walletSnaps[i].data().balance||0) : 0;
+        if (bal <= 0) continue;
+        const payout = payoutSnaps[i].exists ? payoutSnaps[i].data() : null;
+        const airtm = payout && payout.airtm? payout.airtm : null;
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td class="p-2">${esc(u.username)||"-"}<div class="text-xs text-slate-500 mono">${esc(u.uid)}</div></td>
+          <td class="p-2">${esc(u.email)||"-"}</td>
+          <td class="p-2 font-semibold">${HNL(bal)}</td>
+          <td class="p-2 text-xs">${airtm?(esc(airtm.handle||"")):""} ${airtm&&airtm.email?("<br>"+esc(airtm.email)):""}</td>
+          <td class="p-2"><button class="px-2 py-1 rounded bg-emerald-600 text-white text-xs" data-pay="${esc(u.uid)}" data-amt="${bal}">Registrar pago</button></td>
+        `;
+        tr.querySelector('button[data-pay]').addEventListener('click', async (ev)=>{
+          const uid = ev.currentTarget.getAttribute('data-pay');
+          const amount = Number(ev.currentTarget.getAttribute('data-amt'));
+          await registrarPagoBalance(uid, amount);
+          await loadBalances();
+          await calcWalletsPend();
+        });
+        tbody.appendChild(tr);
+      }
+      $("loadBalState").textContent = tbody.children.length ? "" : "Sin balances pendientes.";
+    }catch(e){
+      $("loadBalState").textContent = e.message || "Error al cargar balances.";
+    }
+  }
+  $("refreshBalances").addEventListener("click", async ()=>{
+    await loadBalances();
+    await calcWalletsPend();
+  });
+
+  // ===== Árbol 10 niveles =====
+  async function hijosInBatch(parentIds){
+    if (!parentIds.length) return [];
+    const chunks = []; for (let i=0;i<parentIds.length;i+=10) chunks.push(parentIds.slice(i, i+10));
+    const snaps = await Promise.all(chunks.map(ids =>
+      db.collection("users").where("placementParentId","in",ids).get()
+    ));
+    const arr = []; snaps.forEach(s=>s.forEach(d=>arr.push({ id:d.id, ...d.data() })));
+    return arr;
+  }
+
+  let __levelsForPyramid = [];
+  let __childrenCount = new Map();
+  let __rootData = null;
+
+  function renderLevelCounters(levels){
+    const cont = $("levelCounters"); cont.innerHTML="";
+    levels.forEach((arr, i)=>{
+      const complete = arr.length >= REQ_FIRST_LEVEL;
+      const card = document.createElement("div");
+      card.className="glass rounded-xl p-3 shadow";
+      card.innerHTML = `
+        <div class="text-xs text-slate-500">Nivel ${i+1}</div>
+        <div class="text-xl font-semibold">${arr.length} ${complete ? `<span title="Nivel completo"> ${(BADGES[i+1]||"🏅")}</span>`:""}</div>`;
+      cont.appendChild(card);
+    });
+  }
+
+  function renderTreeGrid(levels){
+    const grid = $("treeGrid"); grid.innerHTML = "";
+    levels.forEach((arr, i)=>{
+      const wrap = document.createElement("div");
+      wrap.className="glass rounded-xl p-3 shadow";
+      const title = document.createElement("div");
+      title.className="font-semibold mb-2 flex items-center justify-between";
+      title.innerHTML = `Nivel ${i+1} <span class="badge bg-slate-100 text-slate-700">${arr.length}</span>`;
+      wrap.appendChild(title);
+
+      if (!arr.length){
+        const empty = document.createElement("div");
+        empty.className="text-xs text-slate-500";
+        empty.textContent="(vacío)";
+        wrap.appendChild(empty);
+      } else {
+        const list = document.createElement("div");
+        list.className="space-y-2";
+        arr.forEach(u=>{
+          const directs = u.__directs || 0;
+          const star = directs >= REQ_FIRST_LEVEL ? "⭐" : "";
+          const item = document.createElement("div");
+          item.className="border rounded-lg p-2 bg-white hover:bg-slate-50 transition cursor-pointer";
+          item.innerHTML = `
+            <div class="text-sm font-medium">
+              ${esc(u.username||u.id)} ${star}
+              <span class="text-xs text-slate-500 mono">${esc(u.id)}</span>
+            </div>
+            <div class="text-xs text-slate-500">${esc(u.email||"")}</div>
+          `;
+          item.addEventListener("click", ()=>{
+            $("rootUid").value = u.id;
+            cargarArbol(u.id);
+          });
+          list.appendChild(item);
+        });
+        wrap.appendChild(list);
+      }
+      grid.appendChild(wrap);
+    });
+  }
+
+  function toggleArbolView(mode){
+    const table = $("treeGrid");
+    const pyr   = $("pyramidWrap");
+    const bt    = $("viewTableBtn");
+    const bp    = $("viewPyramidBtn");
+    if(mode==="pyramid"){
+      hide(table); show(pyr);
+      bt.classList.remove("bg-slate-900","text-white");
+      bp.classList.add("bg-slate-900","text-white");
+      renderPyramidSVG();
+    }else{
+      show(table); hide(pyr);
+      bp.classList.remove("bg-slate-900","text-white");
+      bt.classList.add("bg-slate-900","text-white");
+    }
+  }
+  $("viewPyramidBtn").addEventListener("click", ()=> toggleArbolView("pyramid"));
+  $("viewTableBtn").addEventListener("click", ()=> toggleArbolView("table"));
+  $("maxPerLevel").addEventListener("change", renderPyramidSVG);
+  $("exportSVG").addEventListener("click", ()=>{
+    const svg = $("pyramidContainer")?.querySelector("svg");
+    if(!svg) return toast("No hay gráfico para exportar");
+    const xml = new XMLSerializer().serializeToString(svg);
+    const blob = new Blob([xml], { type: "image/svg+xml;charset=utf-8" });
+    const url  = URL.createObjectURL(blob);
+    const a = document.createElement("a"); a.href=url; a.download="arbol_piramide.svg"; a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  function computeRankForRoot(){
+    if(!__rootData) return 0;
+    const rootId = __rootData.id;
+    const directRoot = __childrenCount.get(rootId)||0;
+    if (directRoot < REQ_FIRST_LEVEL) return 0;
+    let rank = 1;
+    for (let depth=2; depth<=MAX_LEVELS; depth++){
+      const prev = __levelsForPyramid[depth-1] || [];
+      if(prev.length===0) break;
+      const allOK = prev.every(n => (__childrenCount.get(n.id)||0) >= REQ_FIRST_LEVEL);
+      if(allOK) rank = depth; else break;
+    }
+    return rank;
+  }
+
+  function updateBadgeBar(){
+    const bar = $("badgeBar"); bar.innerHTML="";
+    const label = document.createElement("span");
+    label.className="text-xs text-slate-600 mr-1";
+    label.textContent="Insignias de nivel (root):";
+    bar.appendChild(label);
+    for(let i=1;i<__levelsForPyramid.length;i++){
+      const arr = __levelsForPyramid[i] || [];
+      if(arr.length >= REQ_FIRST_LEVEL){
+        const chip=document.createElement("span");
+        chip.className="px-2 py-1 rounded-md border bg-white";
+        chip.title=`Nivel ${i} completo (mín. ${REQ_FIRST_LEVEL})`;
+        chip.textContent=`${BADGES[i]||"🏅"} L${i}`;
+        bar.appendChild(chip);
+      }
+    }
+    if(bar.children.length===1){
+      const none=document.createElement("span");
+      none.className="text-xs text-slate-500";
+      none.textContent=" aún sin completar.";
+      bar.appendChild(none);
+    }
+  }
+
+  function updateRankBar(){
+    const rank = computeRankForRoot();
+    const maxDepthSeen = Math.max(1, __levelsForPyramid.length-1);
+    $("rankTitle").textContent = `Rango actual: R${rank}`;
+    $("rankName").textContent  = RANK_NAME[rank] || "—";
+    $("rankBadge").textContent = RANK_BADGE[rank] || "⬜";
+    $("rankHint").textContent  = rank===0
+      ? `Para R1: ${REQ_FIRST_LEVEL} directos en L1. Llevas ${__childrenCount.get(__rootData.id)||0}.`
+      : `Para R${rank+1}: todos en L${rank} necesitan ${REQ_FIRST_LEVEL} directos.`;
+    $("rankProgress").style.width = `${Math.round((rank/Math.max(1,maxDepthSeen))*100)}%`;
+    $("rankDepthText").textContent = `${rank} / ${maxDepthSeen}`;
+  }
+
+  function renderPyramidLegend(levelFills, levelStrokes){
+    const box = $("pyrLegend"); box.innerHTML = "";
+    for(let i=0;i<__levelsForPyramid.length;i++){
+      const chip=document.createElement("div");
+      chip.className="inline-flex items-center gap-2 px-2 py-1 rounded-md border";
+      chip.style.background=levelFills[i]||"#EEF2FF";
+      chip.style.borderColor=levelStrokes[i]||"#CBD5E1";
+      const dot=document.createElement("span");
+      dot.style.width="10px"; dot.style.height="10px"; dot.style.borderRadius="9999px"; dot.style.display="inline-block";
+      dot.style.background=levelStrokes[i]||"#CBD5E1";
+      const text=document.createElement("span");
+      text.textContent=(i===0)?"L0 (Root)":`L${i}`;
+      chip.appendChild(dot); chip.appendChild(text);
+      if(i>0){
+        const arr = __levelsForPyramid[i]||[];
+        if(arr.length>=REQ_FIRST_LEVEL){
+          const badge=document.createElement("span");
+          badge.textContent=` ${BADGES[i]||"🏅"}`; badge.title=`Nivel ${i} completo`;
+          chip.appendChild(badge);
+        }
+      }
+      box.appendChild(chip);
+    }
+  }
+  function renderPyramidSummary(){
+    const el = $("levelSummary");
+    const parts=[];
+    for(let i=1;i<__levelsForPyramid.length;i++){
+      const arr = __levelsForPyramid[i]||[];
+      parts.push(`L${i}: ${arr.length}${arr.length>=REQ_FIRST_LEVEL? " "+(BADGES[i]||"🏅"):""}`);
+    }
+    el.textContent = parts.length? `Resumen por nivel → ${parts.join("  |  ")}` : "";
+  }
+
+  function renderPyramidSVG(){
+    const cont = $("pyramidContainer");
+    if(!cont || !__levelsForPyramid.length) return;
+
+    const limit = Math.max(1, parseInt($("maxPerLevel")?.value||"120",10));
+
+    const levelFills  = ["#C7D2FE","#EEF2FF","#ECFEFF","#F0FDF4","#FEF9C3","#FFE4E6","#F5F3FF","#E0F2FE","#DCFCE7","#FFE4D6","#F1F5F9"];
+    const levelStrokes= ["#6366F1","#CBD5E1","#67E8F9","#86EFAC","#FACC15","#FB7185","#8B5CF6","#38BDF8","#22C55E","#FB923C","#94A3B8"];
+
+    const L = [];
+    L.push([__rootData]);
+    for(let i=1;i<__levelsForPyramid.length;i++){
+      L.push((__levelsForPyramid[i]||[]).slice(0,limit));
+    }
+
+    const nodeW=160, nodeH=42, vGap=90, marginX=40, marginY=40;
+    const maxAcross = Math.max(...L.map(r=>r.length),1);
+    const baseWidth = marginX*2 + (maxAcross * (nodeW + 30)) - 30;
+    const width  = Math.max(cont.clientWidth||900, baseWidth);
+    const height = marginY*2 + (L.length * (nodeH + vGap)) - vGap;
+
+    cont.innerHTML = "";
+    const svg = document.createElementNS("http://www.w3.org/2000/svg","svg");
+    svg.setAttribute("xmlns","http://www.w3.org/2000/svg");
+    svg.setAttribute("width", String(width));
+    svg.setAttribute("height", String(height));
+    svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+    svg.style.fontFamily = "ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell";
+
+    const gEdges = document.createElementNS(svg.namespaceURI, "g");
+    const gNodes = document.createElementNS(svg.namespaceURI, "g");
+    svg.appendChild(gEdges); svg.appendChild(gNodes);
+
+    const posById = {};
+    function layoutRow(y,n){
+      if(n<=0) return [{x:(width-nodeW)/2,y}];
+      const totalWidth = n*nodeW + (n-1)*30;
+      const startX = (width - totalWidth)/2;
+      return new Array(n).fill(0).map((_,i)=>({ x:startX + i*(nodeW+30), y }));
+    }
+
+    let currentY = marginY;
+    for(let levelIdx=0; levelIdx<L.length; levelIdx++){
+      const row = L[levelIdx];
+      const coords = layoutRow(currentY, row.length||1);
+      row.forEach((node, i)=>{
+        const {x,y} = coords[i] || coords[0];
+        const lvl = node.__level ?? levelIdx;
+        posById[node.id] = { cx:x+nodeW/2, cy:y+nodeH/2, level:lvl };
+
+        const g = document.createElementNS(svg.namespaceURI,"g");
+        g.setAttribute("data-id", node.id);
+        g.setAttribute("cursor","pointer");
+
+        const rect = document.createElementNS(svg.namespaceURI,"rect");
+        rect.setAttribute("x", String(x));
+        rect.setAttribute("y", String(y));
+        rect.setAttribute("rx","8"); rect.setAttribute("ry","8");
+        rect.setAttribute("width", String(nodeW));
+        rect.setAttribute("height", String(nodeH));
+        rect.setAttribute("fill", levelFills[lvl] || "#EEF2FF");
+        rect.setAttribute("stroke", levelStrokes[lvl] || "#CBD5E1");
+        rect.setAttribute("stroke-width","1.25");
+        g.appendChild(rect);
+
+        const badge = document.createElementNS(svg.namespaceURI, "rect");
+        badge.setAttribute("x", String(x+6));
+        badge.setAttribute("y", String(y+6));
+        badge.setAttribute("rx","6"); badge.setAttribute("ry","6");
+        badge.setAttribute("width","28"); badge.setAttribute("height","16");
+        badge.setAttribute("fill", levelStrokes[lvl] || "#64748B");
+        badge.setAttribute("opacity","0.9");
+        g.appendChild(badge);
+
+        const badgeText = document.createElementNS(svg.namespaceURI, "text");
+        badgeText.setAttribute("x", String(x+20));
+        badgeText.setAttribute("y", String(y+18));
+        badgeText.setAttribute("text-anchor","middle");
+        badgeText.setAttribute("font-size","10");
+        badgeText.setAttribute("fill","#fff");
+        badgeText.textContent = `L${lvl}`;
+        g.appendChild(badgeText);
+
+        const text = document.createElementNS(svg.namespaceURI, "text");
+        text.setAttribute("x", String(x + nodeW/2));
+        text.setAttribute("y", String(y + nodeH/2 + 4));
+        text.setAttribute("text-anchor","middle");
+        text.setAttribute("font-size","12");
+        text.setAttribute("fill","#0F172A");
+        text.textContent = node.username || node.id.slice(0,6);
+        g.appendChild(text);
+
+        const directs = __childrenCount.get(node.id)||0;
+        if(directs >= REQ_FIRST_LEVEL){
+          const star = document.createElementNS(svg.namespaceURI, "text");
+          star.setAttribute("x", String(x + nodeW - 12));
+          star.setAttribute("y", String(y + 16));
+          star.setAttribute("text-anchor","middle");
+          star.setAttribute("font-size","14");
+          star.textContent = "⭐";
+          g.appendChild(star);
+        }
+
+        g.addEventListener("mouseenter", ()=>{
+          const tip = $("pyrTooltip");
+          tip.innerHTML =
+            `👤 ${escHtml(node.username||node.id)} (L${lvl})\n`+
+            (node.email ? `✉️ ${escHtml(node.email)}\n`:"")+
+            (node.status? `🔖 ${escHtml(node.status)}\n`:"")+
+            (node.createdAt && node.createdAt.toDate? `⏱ ${node.createdAt.toDate().toLocaleString("es-HN")}`:"")+
+            (directs>=REQ_FIRST_LEVEL? `\n⭐ Primer nivel completo (${directs} directos)`:"");
+          tip.classList.remove("hidden");
+        });
+        g.addEventListener("mousemove", (e)=>{
+          const tip=$("pyrTooltip"); if(tip.classList.contains("hidden")) return;
+          const rect=cont.getBoundingClientRect();
+          const xPos = e.clientX - rect.left + cont.scrollLeft + 14;
+          const yPos = e.clientY - rect.top  + cont.scrollTop  + 14;
+          tip.style.left = xPos + "px"; tip.style.top = yPos + "px";
+        });
+        g.addEventListener("mouseleave", ()=> $("pyrTooltip").classList.add("hidden"));
+        g.addEventListener("click", ()=>{
+          const dd = `
+            <div><b>Usuario:</b> ${escHtml(node.username||node.id)}</div>
+            <div><b>Nivel:</b> L${lvl}</div>
+            ${node.email?`<div><b>Email:</b> ${escHtml(node.email)}</div>`:""}
+            ${node.status?`<div><b>Estado:</b> ${escHtml(node.status)}</div>`:""}
+            ${node.placementParentId?`<div><b>Padre:</b> ${escHtml(node.placementParentId)}</div>`:""}
+            <div><b>Directos:</b> ${directs} ${directs>=REQ_FIRST_LEVEL?"<span title='Primer nivel completo'>⭐</span>":""}</div>
+          `;
+          $("nodeDetail").innerHTML = dd;
+          show($("nodeModal"));
+        });
+
+        gNodes.appendChild(g);
+      });
+      currentY += (nodeH + vGap);
+    }
+
+    for(let levelIdx=1; levelIdx<L.length; levelIdx++){
+      const row = L[levelIdx];
+      row.forEach(child=>{
+        const parentId = child.placementParentId || (levelIdx===1 ? __rootData.id : null);
+        const p = parentId ? (posById[parentId]||null) : null;
+        const c = posById[child.id];
+        if(!p || !c) return;
+        const line = document.createElementNS(svg.namespaceURI, "line");
+        line.setAttribute("x1", String(p.cx));
+        line.setAttribute("y1", String(p.cy + 21));
+        line.setAttribute("x2", String(c.cx));
+        line.setAttribute("y2", String(c.cy - 21));
+        line.setAttribute("stroke","#CBD5E1");
+        line.setAttribute("stroke-width","1.25");
+        gEdges.appendChild(line);
+      });
+    }
+
+    cont.appendChild(svg);
+    renderPyramidLegend(levelFills, levelStrokes);
+    renderPyramidSummary();
+  }
+
+  $("nodeClose").addEventListener("click", ()=> hide($("nodeModal")));
+  document.addEventListener("keydown",(e)=>{ if(e.key==="Escape" && !$("nodeModal").classList.contains("hidden")) hide($("nodeModal")); });
+
+  async function cargarArbol(root){
+    $("treeState").textContent = "Cargando árbol…";
+    const levels = [];
+    __levelsForPyramid = [];
+    __childrenCount = new Map();
+    __rootData = null;
+
+    try{
+      const rSnap = await db.collection("users").doc(root).get();
+      if(!rSnap.exists){ $("treeState").textContent="Root no encontrado."; return; }
+      const r = { id:rSnap.id, ...rSnap.data(), __level:0 };
+      __rootData = r;
+
+      let currentLevel = [r];
+      __levelsForPyramid = [[r]];
+      for (let lvl=1; lvl<=MAX_LEVELS; lvl++){
+        const ids = currentLevel.map(x=>x.id);
+        if(!ids.length) break;
+        const children = await hijosInBatch(ids);
+        const childrenWithLevel = children.map(c => ({...c, __level:lvl}));
+        levels.push(childrenWithLevel);
+        __levelsForPyramid.push(childrenWithLevel);
+        currentLevel = childrenWithLevel;
+        if (!childrenWithLevel.length) break;
+      }
+
+      for(let i=1;i<__levelsForPyramid.length;i++){
+        for(const node of __levelsForPyramid[i]){
+          const pid = node.placementParentId;
+          if(!pid) continue;
+          __childrenCount.set(pid, (__childrenCount.get(pid)||0)+1);
+        }
+      }
+      if(!__childrenCount.has(r.id)) __childrenCount.set(r.id, levels[0]?.length||0);
+
+      for(let i=0;i<levels.length;i++){
+        levels[i] = levels[i].map(u => ({...u, __directs: __childrenCount.get(u.id)||0}));
+      }
+
+      renderLevelCounters(levels);
+      renderTreeGrid(levels);
+      updateBadgeBar();
+      updateRankBar();
+
+      const total = levels.reduce((a,b)=>a+b.length,0);
+      $("treeState").textContent = total ? `Mostrando ${total} nodos` : "Sin nodos en los primeros 10 niveles.";
+
+      if(!$("pyramidWrap").classList.contains("hidden")) renderPyramidSVG();
+
+    }catch(e){
+      $("treeState").textContent = e.message || "Error al cargar árbol.";
+    }
+  }
+  $("loadTree").addEventListener("click", ()=>{
+    const root = $("rootUid").value.trim();
+    if (root) cargarArbol(root);
+  });
+  $("deleteFromTree").addEventListener("click", ()=>{
+    const uid = $("rootUid").value.trim();
+    if (uid) eliminarSocio(uid);
+  });
+
+  // ===== Modal texto (contraseña / código) =====
+  const pwdModal = $("pwdModal");
+  const pwdContent = $("pwdContent");
+  const pwdTitle = $("pwdTitle");
+  $("pwdClose").addEventListener("click", ()=> hide(pwdModal));
+  function showTextModal(title, text){
+    pwdTitle.textContent = title || "Dato";
+    pwdContent.textContent = text || "No disponible";
+    show(pwdModal);
+  }
+  async function verCodigo(uid){
+    try{
+      const snap = await db.collection("users").doc(uid).get();
+      if (!snap.exists) { showTextModal("Código de acceso", "No encontrado"); return; }
+      const u = snap.data() || {};
+      const code = u.movieCode || u.movieCodeEntered || "(no asignado)";
+      showTextModal("Código de acceso", String(code));
+    }catch(e){
+      showTextModal("Código de acceso", "Error leyendo código");
+    }
+  }
+  window.verCodigo = verCodigo;
+
+  // ===== Confirmar pago y activar (usa POOL dinámico) =====
+  let _busyActivate = false;
+  async function confirmarPago(uid){
+    if(_busyActivate) return; _busyActivate = true;
+    try{
+      if(!confirm("Confirmar pago y activar usuario?")) return;
+
+      const userRef = db.collection("users").doc(uid);
+      await db.runTransaction(async (tx)=>{
+        const snap = await tx.get(userRef);
+        if (!snap.exists) throw new Error("Usuario no encontrado");
+        const u = snap.data();
+        if (u.status === "active" && u.commissionsDistributed === true){
+          throw new Error("Ya está activo.");
+        }
+
+        const parentId = u.sponsorId || COMPANY_REF;
+
+        // depth
+        let depth = 1;
+        if (parentId){
+          const pSnap = await tx.get(db.collection("users").doc(parentId));
+          depth = (pSnap.exists && pSnap.data().depth != null) ? (pSnap.data().depth + 1) : 1;
+        }
+
+        // cadena sponsors
+        const sponsorReads = [];
+        if (u.sponsorId && u.sponsorId !== COMPANY_REF){
+          let currentSponsorId = u.sponsorId;
+          for (let level=1; level<=10; level++){
+            if (!currentSponsorId) break;
+            const sRef  = db.collection("users").doc(currentSponsorId);
+            const sSnap = await tx.get(sRef);
+            if (!sSnap.exists) break;
+            sponsorReads.push({ level, id: currentSponsorId, data: sSnap.data() });
+            currentSponsorId = sSnap.data().sponsorId || null;
+          }
+        }
+
+        const cfgSnap = await tx.get(cfgRef);
+        const cfg = cfgSnap.data() || {};
+        const feeHNL  = Math.round( (typeof cfg.entryFee === "number" ? cfg.entryFee : ENTRY_FEE_HNL) );
+        const distPct = (typeof cfg.distPercent === "number" ? cfg.distPercent : DIST_PERCENT);
+        const levelPerc = Array.isArray(cfg.percents) ? cfg.percents.map(Number) : PERCENTS;
+
+        const sumLevels = levelPerc.reduce((a,b)=>a+(Number(b)||0),0);
+        if (levelPerc.length !== 10 || Math.abs(sumLevels-100)>1e-6){
+          throw new Error("Distribución de niveles inválida (debe sumar 100%).");
+        }
+        if (!isFinite(feeHNL) || feeHNL<=0) throw new Error("Cuota inválida.");
+
+        const pool = Math.round(feeHNL * (distPct/100)); // monto base para red
+        const corpShare = Math.round(feeHNL - pool);     // corporativo
+
+        const movieCode = u.movieCode || u.movieCodeEntered || ("HP"+Math.random().toString(36).slice(2,8)).toUpperCase();
+
+        // Log pago activación
+        tx.set(db.collection("payments").doc(), {
+          userId: uid, amount: feeHNL, currency: "HNL",
+          status: "completed", processedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          method: "transferencia/externo", note: "Alta manual admin"
+        });
+
+        // Empresa (renombrado lógico: balance70 = corporativo, balance30 = red)
+        tx.set(adminWalletRef, {
+          balance70: firebase.firestore.FieldValue.increment(corpShare),
+          balance30: firebase.firestore.FieldValue.increment(pool),
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge:true });
+
+        // Métricas
+        tx.set(metricsRef, {
+          network30Accum: firebase.firestore.FieldValue.increment(pool),
+          totalEntryFees: firebase.firestore.FieldValue.increment(feeHNL),
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge:true });
+
+        // Comisiones por niveles desde POOL
+        for (const s of sponsorReads){
+          const { level, id, data } = s;
+          if (data.status === "active"){
+            const percent = Number(levelPerc[level-1] || 0);  // % del pool
+            const amount  = Math.round( (pool * (percent/100)) * 100 ) / 100;
+            if (amount > 0){
+              tx.set(db.collection("commissions").doc(), {
+                earnerId: id, payerId: uid, level, percent, amount,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                note: `Alta: ${percent}% de pool ${pool} HNL`
+              });
+              tx.set(db.collection("wallets").doc(id), {
+                balance: firebase.firestore.FieldValue.increment(amount)
+              }, { merge:true });
+            }
+          }
+        }
+
+        // Activar usuario
+        tx.set(userRef, {
+          status: "active",
+          placementParentId: parentId || COMPANY_REF,
+          depth, movieCode,
+          activatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          commissionsDistributed: true
+        }, { merge:true });
+      });
+
+      alert("Usuario activado.");
+      await loadPendientes(); await loadActivos(); await loadBalances();
+      await calcWalletsPend();
+    }catch(e){
+      alert(e.message || "Error al activar.");
+    }finally{
+      _busyActivate = false;
+    }
+  }
+  window.confirmarPago = confirmarPago;
+
+  // ===== Registrar pago de balance (usuario) =====
+  async function registrarPagoBalance(uid, amount){
+    let paid = 0;
+    try{
+      await db.runTransaction(async (tx)=>{
+        const wRef = db.collection("wallets").doc(uid);
+        const wSnap = await tx.get(wRef);
+        const current = wSnap.exists ? (wSnap.data().balance||0) : 0;
+        const toPay = Math.min(current, amount||0);
+        paid = toPay;
+
+        const pRef = db.collection("payouts").doc();
+        tx.set(pRef, {
+          userId: uid, amount: toPay, currency: "HNL", method: "Airtm",
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        tx.set(wRef, { balance: firebase.firestore.FieldValue.increment(-toPay) }, { merge:true });
+      });
+
+      if (paid > 0){
+        await metricsRef.set({
+          paidToUsers: firebase.firestore.FieldValue.increment(paid),
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge:true });
+      }
+
+      toast("Pago registrado");
+    }catch(e){
+      alert(e.message || "No se pudo registrar el pago.");
+    }
+  }
+
+  // ===== Reasignación/Eliminación =====
+  async function hijosDirectos(uid){
+    const q = await db.collection("users").where("placementParentId","==",uid).get();
+    return q.docs.map(d=>({ id:d.id, ...d.data() }));
+  }
+  async function ajustarDepthDescendencia(uid, delta){
+    if (!delta) return;
+    const hijos = await hijosDirectos(uid);
+    for (const h of hijos){
+      const newDepth = Math.max(0, (h.depth ?? 0) + delta);
+      await db.collection("users").doc(h.id).set({ depth: newDepth }, { merge:true });
+      await ajustarDepthDescendencia(h.id, delta);
+    }
+  }
+  async function reasignarHijosASponsor({ uid, sponsorId }){
+    const hijos = await hijosDirectos(uid);
+    if (!hijos.length) return { moved: 0 };
+    const targetId = sponsorId || COMPANY_REF;
+    const sSnap = await db.collection("users").doc(targetId).get();
+    const sDepth = (sSnap.exists && sSnap.data().depth != null) ? sSnap.data().depth : 0;
+
+    for (const ch of hijos){
+      const oldDepth = ch.depth ?? 0;
+      const newDepth = (sDepth != null ? sDepth + 1 : 1);
+      const delta = newDepth - oldDepth;
+      await db.collection("users").doc(ch.id).set({
+        placementParentId: targetId,
+        depth: newDepth
+      }, { merge: true });
+      if (delta) await ajustarDepthDescendencia(ch.id, delta);
+    }
+    return { moved: hijos.length };
+  }
+
+  async function eliminarSocio(uid){
+    try{
+      if (!confirm("¿Eliminar este socio? Su descendencia pasará a su sponsor y se eliminará su cuenta de acceso.")) return;
+
+      const uRef = db.collection("users").doc(uid);
+      const uSnap = await uRef.get();
+      if (!uSnap.exists) throw new Error("Usuario no encontrado.");
+      const u = uSnap.data();
+
+      const sponsorId = u.sponsorId || COMPANY_REF;
+      await reasignarHijosASponsor({ uid, sponsorId });
+
+      async function deleteWhere(coll, field, value){
+        while (true){
+          const qs = await db.collection(coll).where(field,"==",value).limit(300).get();
+          if (qs.empty) break;
+          const batch = db.batch();
+          qs.docs.forEach(d => batch.delete(d.ref));
+          await batch.commit();
+        }
+      }
+      await deleteWhere("commissions", "earnerId", uid);
+      await deleteWhere("commissions", "payerId",  uid);
+      await deleteWhere("payments",   "userId",   uid);
+      await deleteWhere("payouts",    "userId",   uid);
+
+      const batchMain = db.batch();
+      batchMain.delete(db.collection("wallets").doc(uid));
+      batchMain.delete(db.collection("payoutProfiles").doc(uid));
+      batchMain.delete(db.collection("profiles").doc(uid));
+      batchMain.delete(db.collection("users").doc(uid));
+      await batchMain.commit();
+
+      // (Opcional) Llamada a Cloud Function para borrar Auth user
+      // const FN_URL = "https://YOUR_REGION-YOUR_PROJECT.cloudfunctions.net/deleteAuthUser";
+      // await fetch(FN_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ uid }) });
+
+      alert("Socio eliminado completamente.");
+      await loadPendientes(); await loadActivos(); await loadBalances();
+      await calcWalletsPend();
+    }catch(e){
+      console.error(e);
+      alert(e.message || "No se pudo eliminar el socio.");
+    }
+  }
+  window.eliminarSocio = eliminarSocio;
+
+  // ===== Link corporativo: Copiar + QR =====
+  const corpURL = `${location.origin}/registro.html?ref=${encodeURIComponent(COMPANY_REF)}`;
+  $("corpLink").textContent = corpURL;
+
+  $("btnCopyCorp").addEventListener("click", async ()=>{
+    try{
+      if (navigator.share){
+        await navigator.share({ title:"Únete a HERPLUS", url: corpURL });
+        return;
+      }
+    }catch(_){}
+    await navigator.clipboard.writeText(corpURL).catch(()=>{});
+    toast("Enlace copiado");
+  });
+
+  $("btnQRCorp").addEventListener("click", ()=>{
+    $("qrText").textContent = corpURL;
+    show($("qrModal"));
+    const box = $("qrBox");
+    box.innerHTML = "";
+    new QRCode(box, { text: corpURL, width: 220, height: 220, correctLevel: QRCode.CorrectLevel.M });
+  });
+  $("qrClose").addEventListener("click", ()=> hide($("qrModal")));
+  document.addEventListener("keydown",(e)=>{ if(e.key==="Escape" && !$("qrModal").classList.contains("hidden")) hide($("qrModal")); });
+  $("qrDownload").addEventListener("click", ()=>{
+    const canvas = $("qrBox").querySelector("canvas");
+    if (!canvas) { toast("Genera el QR primero"); return; }
+    const link = document.createElement("a");
+    link.download = "HERPLUS_corporativo_qr.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  });
+
+  // ===== Corte (fecha fin de mes) =====
+  function setCutDates(){
+    const d = endOfMonth();
+    $("cutDate").textContent = d.toLocaleDateString("es-HN");
+  }
+  setCutDates();
+
+  // ===== Gate por código + sesión =====
+  const formCode = $("formCode");
+  formCode.addEventListener("submit", async (e)=>{
+    e.preventDefault();
+    $("gateMsg").textContent = ""; $("gateOk").textContent = "";
+    try{
+      show($("gateLoading"));
+      const code = $("accessCode").value.trim();
+      if (!code) throw new Error("Ingresa el código.");
+      const snap = await cfgRef.get();
+      const d = snap.data() || {};
+      if (!d.adminCodeHash) throw new Error("Config incompleta.");
+      const hash = await sha256(code);
+      if (hash !== d.adminCodeHash) throw new Error("Código incorrecto.");
+      setSession();
+      $("gateOk").textContent = "Acceso concedido.";
+      hide($("gate"));
+      show($("app"));
+      await init();
+    }catch(err){
+      $("gateMsg").textContent = err.message || "Error verificando código.";
+    }finally{
+      hide($("gateLoading"));
+    }
+  });
+
+  $("btnLeave").addEventListener("click", ()=>{
+    unsubscribeLive();
+    clearSession();
+    show($("gate"));
+    hideHard($("app"));
+    $("accessCode").value = "";
+    $("gateOk").textContent = "";
+    $("gateMsg").textContent = "";
+  });
+
+  // ===== Inicialización principal =====
+  async function init(){
+    subscribeLive();
+    await loadPendientes();
+    await loadActivos();
+    await loadBalances();
+    await calcWalletsPend();
+  }
+
+  (async ()=>{ if (hasSession()){ hide($("gate")); show($("app")); await init(); } })();
+</script>
+
 </body>
 </html>
+
+
+
